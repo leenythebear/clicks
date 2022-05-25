@@ -27,9 +27,9 @@ def shorten_link(bitly_token, url):
     return link
 
   
-def count_clicks(bitly_token, link):
+def count_clicks(bitly_token, url):
     params_for_url = {'units': '-1'}
-    bitlink_url = f'https://api-ssl.bitly.com/v4/bitlinks/{link}/clicks/summary'
+    bitlink_url = f'https://api-ssl.bitly.com/v4/bitlinks/{url}/clicks/summary'
     headers = {
         "Authorization": f"Bearer {bitly_token}"
     }
@@ -44,19 +44,18 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Сокращение ссылок и подсчет количества переходов по ним')
     parser.add_argument('link', help='Ссылка на сайт')
     args = parser.parse_args()
-    url = args.link
-    parsed_link = urlparse(url)
-    link = ''.join([parsed_link.netloc, parsed_link.path])
-    if is_bitlink(bitly_token, link):
+    parsed_link = urlparse(args.link)
+    link_without_protokol = ''.join([parsed_link.netloc, parsed_link.path])
+    if is_bitlink(bitly_token, link_without_protokol):
         try:
-            clicks = count_clicks(bitly_token, link)
+            clicks = count_clicks(bitly_token, link_without_protokol)
             print(clicks)
         except requests.exceptions.HTTPError as error:
             print(f"Во время получения данных о количестве переходов произошла следующая ошибка: {error}")
     else:
         try:
-            link = shorten_link(bitly_token, url)
-            print(link)
+            bitlink = shorten_link(bitly_token, args.link)
+            print(bitlink)
         except requests.exceptions.HTTPError as error:
-          print(f"Во время получения короткой ссылки произошла следующая ошибка: {error}")
+            print(f"Во время получения короткой ссылки произошла следующая ошибка: {error}")
         
