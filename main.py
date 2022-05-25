@@ -1,8 +1,9 @@
-import os
-import requests
-from urllib.parse import urlparse
-from dotenv import load_dotenv
 import argparse
+import os
+from urllib.parse import urlparse
+
+import requests
+from dotenv import load_dotenv
 
 
 def is_bitlink(bitly_token, url):
